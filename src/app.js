@@ -1,14 +1,34 @@
 const express = require("express");
+const { adminAuth, userAuth } = require("./middlewares/auth");
 
 const app = express();
+app.use("/admin", adminAuth);
 
-//Request handler
+app.get("/login", (req, res) => {
+  res.send("Login page");
+});
 
-//This will only handle get call to /user
-app.get("/user/:userId", (req, res) => {
-  console.log(req.params); //to get params(dynamic routes)
-  console.log(req.query); //to get query params
-  res.send({ firstName: "Soumyabrata", lastName: "Majumder" });
+app.get("/users", userAuth, (req, res) => {
+  try {
+    res.send("all users data");
+  } catch (error) {
+    res.status(500).send("Something went wrong");
+  }
+});
+
+app.get("/admin/getAllUsers", (req, res, next) => {
+  throw new Error(" Error occurred");
+  res.send("all users data");
+});
+
+app.get("/admin/deleteUser", (req, res, next) => {
+  res.send("User deleted");
+});
+
+app.use((err, req, res, next) => {
+  if (err) {
+    res.status(500).send("Something went wrong");
+  }
 });
 
 app.listen(3000, () => {
